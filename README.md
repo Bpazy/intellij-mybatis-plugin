@@ -1,6 +1,8 @@
 [中文](README.md) | 
 [ENGLISH](README_EN.md)
 
+本项目Fork自https://github.com/wuzhizhan/free-idea-mybatis。  
+
 ## Description
 A idea plugin for mybatis .
 free-idea-mybatis是一款增强idea对mybatis支持的插件，主要功能如下：
