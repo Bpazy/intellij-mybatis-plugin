@@ -5,6 +5,4 @@ log.roo
 out/
 .DS_Store
 .gradle/
-gradle/
 build/
-out/
