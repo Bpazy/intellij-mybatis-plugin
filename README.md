@@ -1,7 +1,7 @@
 [中文](README.md) | 
 [ENGLISH](README_EN.md)
 
-本项目Fork自https://github.com/wuzhizhan/free-idea-mybatis。  
+本项目Fork自https://github.com/wuzhizhan/free-idea-mybatis   
 
 ## Description
 A idea plugin for mybatis .
