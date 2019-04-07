@@ -1,13 +1,15 @@
 package com.github.bpazy.mybatis.generate;
 
-import com.google.common.base.Function;
-import com.google.common.base.Optional;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-
+import com.github.bpazy.mybatis.dom.model.GroupTwo;
+import com.github.bpazy.mybatis.dom.model.Mapper;
+import com.github.bpazy.mybatis.service.EditorService;
+import com.github.bpazy.mybatis.service.JavaService;
+import com.github.bpazy.mybatis.setting.MybatisSetting;
+import com.github.bpazy.mybatis.ui.ListSelectionListener;
+import com.github.bpazy.mybatis.ui.UiComponentFacade;
+import com.github.bpazy.mybatis.util.CollectionUtils;
+import com.github.bpazy.mybatis.util.JavaUtils;
+import com.google.common.collect.*;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
@@ -18,22 +20,15 @@ import com.intellij.psi.*;
 import com.intellij.psi.impl.source.PsiClassReferenceType;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.CommonProcessors.CollectProcessor;
-import com.github.bpazy.mybatis.dom.model.GroupTwo;
-import com.github.bpazy.mybatis.dom.model.Mapper;
-import com.github.bpazy.mybatis.service.EditorService;
-import com.github.bpazy.mybatis.service.JavaService;
-import com.github.bpazy.mybatis.setting.MybatisSetting;
-import com.github.bpazy.mybatis.ui.ListSelectionListener;
-import com.github.bpazy.mybatis.ui.UiComponentFacade;
-import com.github.bpazy.mybatis.util.CollectionUtils;
-import com.github.bpazy.mybatis.util.JavaUtils;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * @author yanglin
@@ -50,18 +45,15 @@ public abstract class StatementGenerator {
 
     public static final Set<StatementGenerator> ALL = ImmutableSet.of(UPDATE_GENERATOR, SELECT_GENERATOR, DELETE_GENERATOR, INSERT_GENERATOR);
 
-    private static final Function<Mapper, String> FUN = new Function<Mapper, String>() {
-        @Override
-        public String apply(Mapper mapper) {
-            VirtualFile vf = mapper.getXmlTag().getContainingFile().getVirtualFile();
-            if (null == vf) return "";
-            return vf.getCanonicalPath();
-        }
+    private static final Function<Mapper, String> FUN = mapper -> {
+        VirtualFile vf = mapper.getXmlTag().getContainingFile().getVirtualFile();
+        if (null == vf) return "";
+        return vf.getCanonicalPath();
     };
 
     public static Optional<PsiClass> getSelectResultType(@Nullable PsiMethod method) {
         if (null == method) {
-            return Optional.absent();
+            return Optional.empty();
         }
         PsiType returnType = method.getReturnType();
         if (returnType instanceof PsiPrimitiveType && returnType != PsiType.VOID) {
@@ -74,9 +66,9 @@ public abstract class StatementGenerator {
                     type = (PsiClassReferenceType) parameters[0];
                 }
             }
-            return Optional.fromNullable(type.resolve());
+            return Optional.ofNullable(type.resolve());
         }
-        return Optional.absent();
+        return Optional.empty();
     }
 
     private static void doGenerate(@NotNull final StatementGenerator generator, @NotNull final PsiMethod method) {
@@ -141,7 +133,6 @@ public abstract class StatementGenerator {
         if (1 == mappers.size()) {
             setupTag(method, (Mapper) Iterables.getOnlyElement(mappers, (Object) null));
         } else if (mappers.size() > 1) {
-            Collection<String> paths = Collections2.transform(mappers, FUN);
             UiComponentFacade.getInstance(method.getProject()).showListPopup("Choose target mapper xml to generate", new ListSelectionListener() {
                 @Override
                 public void selected(int index) {
@@ -152,7 +143,7 @@ public abstract class StatementGenerator {
                 public boolean isWriteAction() {
                     return true;
                 }
-            }, paths.toArray(new String[paths.size()]));
+            }, mappers.stream().map(FUN).toArray(String[]::new));
         }
     }
 

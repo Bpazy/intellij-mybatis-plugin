@@ -1,6 +1,6 @@
 package com.github.bpazy.mybatis.alias;
 
-import com.google.common.base.Optional;
+import java.util.Optional;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiClass;
@@ -26,7 +26,7 @@ public abstract class AliasResolver {
     @NotNull
     protected Optional<AliasDesc> addAliasDesc(@NotNull Set<AliasDesc> descs, @Nullable PsiClass clazz, @Nullable String alias) {
         if (null == alias || !JavaUtils.isModelClazz(clazz)) {
-            return Optional.absent();
+            return Optional.empty();
         }
         AliasDesc desc = new AliasDesc();
         descs.add(desc);

@@ -1,6 +1,6 @@
 package com.github.bpazy.mybatis.alias;
 
-import com.google.common.base.Optional;
+import java.util.Optional;
 import com.google.common.collect.Lists;
 
 import com.intellij.openapi.components.ServiceManager;
@@ -64,7 +64,7 @@ public class AliasFacade {
                 }
             }
         }
-        return Optional.absent();
+        return Optional.empty();
     }
 
     @NotNull
@@ -78,7 +78,7 @@ public class AliasFacade {
 
     public Optional<AliasDesc> findAliasDesc(@Nullable PsiClass clazz) {
         if (null == clazz) {
-            return Optional.absent();
+            return Optional.empty();
         }
         for (AliasResolver resolver : resolvers) {
             for (AliasDesc desc : resolver.getClassAliasDescriptions(clazz)) {
@@ -87,7 +87,7 @@ public class AliasFacade {
                 }
             }
         }
-        return Optional.absent();
+        return Optional.empty();
     }
 
     public void registerResolver(@NotNull AliasResolver resolver) {

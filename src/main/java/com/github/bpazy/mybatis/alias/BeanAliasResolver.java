@@ -1,6 +1,5 @@
 package com.github.bpazy.mybatis.alias;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.Sets;
 
 import com.intellij.openapi.module.Module;
@@ -19,6 +18,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -50,7 +50,7 @@ public class BeanAliasResolver extends PackageAliasResolver {
     }
 
     private void addPackages(Set<String> res, CommonSpringModel springModel) {
-        Optional sqlSessionFactoryClazzOpt = JavaUtils.findClazz(project, MAPPER_ALIAS_PACKAGE_CLASS);
+        Optional<PsiClass> sqlSessionFactoryClazzOpt = JavaUtils.findClazz(project, MAPPER_ALIAS_PACKAGE_CLASS);
         if (sqlSessionFactoryClazzOpt.isPresent()) {
             Collection domBeans = springModel.getAllDomBeans();
             PsiClass sqlSessionFactoryClazz = (PsiClass) sqlSessionFactoryClazzOpt.get();

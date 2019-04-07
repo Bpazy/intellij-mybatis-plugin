@@ -1,6 +1,6 @@
 package com.github.bpazy.mybatis.service;
 
-import com.google.common.base.Optional;
+import java.util.Optional;
 
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
@@ -49,16 +49,16 @@ public class JavaService {
 
     public Optional<PsiClass> getReferenceClazzOfPsiField(@NotNull PsiElement field) {
         if (!(field instanceof PsiField)) {
-            return Optional.absent();
+            return Optional.empty();
         }
         PsiType type = ((PsiField) field).getType();
-        return type instanceof PsiClassReferenceType ? Optional.fromNullable(((PsiClassReferenceType) type).resolve()) : Optional.<PsiClass>absent();
+        return type instanceof PsiClassReferenceType ? Optional.ofNullable(((PsiClassReferenceType) type).resolve()) : Optional.empty();
     }
 
     public Optional<DomElement> findStatement(@Nullable PsiMethod method) {
-        CommonProcessors.FindFirstProcessor<DomElement> processor = new CommonProcessors.FindFirstProcessor<DomElement>();
+        CommonProcessors.FindFirstProcessor<DomElement> processor = new CommonProcessors.FindFirstProcessor<>();
         process(method, processor);
-        return processor.isFound() ? Optional.fromNullable(processor.getFoundValue()) : Optional.<DomElement>absent();
+        return processor.isFound() ? Optional.ofNullable(processor.getFoundValue()) : Optional.empty();
     }
 
     @SuppressWarnings("unchecked")
@@ -94,14 +94,14 @@ public class JavaService {
     }
 
     public <T> Optional<T> findWithFindFirstProcessor(@NotNull PsiElement target) {
-        CommonProcessors.FindFirstProcessor<T> processor = new CommonProcessors.FindFirstProcessor<T>();
+        CommonProcessors.FindFirstProcessor<T> processor = new CommonProcessors.FindFirstProcessor<>();
         process(target, processor);
-        return Optional.fromNullable(processor.getFoundValue());
+        return Optional.ofNullable(processor.getFoundValue());
     }
 
     public void importClazz(PsiJavaFile file, String clazzName) {
         if (!JavaUtils.hasImportClazz(file, clazzName)) {
-            Optional<PsiClass> clazz = JavaUtils.findClazz(project, clazzName);
+            java.util.Optional<PsiClass> clazz = JavaUtils.findClazz(project, clazzName);
             PsiImportList importList = file.getImportList();
             if (clazz.isPresent() && null != importList) {
                 PsiElementFactory elementFactory = javaPsiFacade.getElementFactory();

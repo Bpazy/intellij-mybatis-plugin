@@ -1,8 +1,5 @@
 package com.github.bpazy.mybatis.util;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Collections2;
-
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -18,6 +15,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public final class DomUtils {
 
@@ -30,12 +28,7 @@ public final class DomUtils {
     public static <T extends DomElement> Collection<T> findDomElements(@NotNull Project project, Class<T> clazz) {
         GlobalSearchScope scope = GlobalSearchScope.allScope(project);
         List<DomFileElement<T>> elements = DomService.getInstance().getFileElements(clazz, project, scope);
-        return Collections2.transform(elements, new Function<DomFileElement<T>, T>() {
-            @Override
-            public T apply(DomFileElement<T> input) {
-                return input.getRootElement();
-            }
-        });
+        return elements.stream().map(DomFileElement::getRootElement).collect(Collectors.toList());
     }
 
     public static boolean isMybatisFile(@Nullable PsiFile file) {

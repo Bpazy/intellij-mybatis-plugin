@@ -1,7 +1,5 @@
 package com.github.bpazy.mybatis.generate;
 
-import com.google.common.base.Optional;
-
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiMethod;
 import com.github.bpazy.mybatis.dom.model.GroupTwo;
@@ -9,6 +7,8 @@ import com.github.bpazy.mybatis.dom.model.Mapper;
 import com.github.bpazy.mybatis.dom.model.Select;
 
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Optional;
 
 /**
  * @author yanglin

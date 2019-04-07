@@ -1,6 +1,6 @@
 package com.github.bpazy.mybatis.reference;
 
-import com.google.common.base.Optional;
+import java.util.Optional;
 
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiClass;
@@ -36,7 +36,7 @@ public class ContextPsiFieldReference extends PsiReferenceBase<XmlAttributeValue
     @Override
     public PsiElement resolve() {
         Optional<PsiElement> resolved = resolver.resolve(index);
-        return resolved.orNull();
+        return resolved.orElse(null);
     }
 
     @NotNull
@@ -57,7 +57,7 @@ public class ContextPsiFieldReference extends PsiReferenceBase<XmlAttributeValue
         } else {
             return MapperBacktrackingUtils.getPropertyClazz(myElement);
         }
-        return Optional.absent();
+        return Optional.empty();
     }
 
     public ContextReferenceSetResolver getResolver() {

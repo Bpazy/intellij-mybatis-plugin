@@ -1,6 +1,6 @@
 package com.github.bpazy.mybatis.dom.converter;
 
-import com.google.common.base.Optional;
+import java.util.Optional;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
@@ -51,7 +51,7 @@ public abstract class IdBasedTagConverter extends ConverterAdaptor<XmlAttributeV
     @Nullable
     @Override
     public XmlAttributeValue fromString(@Nullable @NonNls String value, ConvertContext context) {
-        return matchIdDomElement(selectStrategy(context).getValue(), value, context).orNull();
+        return matchIdDomElement(selectStrategy(context).getValue(), value, context).orElse(null);
     }
 
     @NotNull
@@ -63,7 +63,7 @@ public abstract class IdBasedTagConverter extends ConverterAdaptor<XmlAttributeV
                 return Optional.of(idDomElement.getId().getXmlAttributeValue());
             }
         }
-        return Optional.absent();
+        return Optional.empty();
     }
 
     @Nullable

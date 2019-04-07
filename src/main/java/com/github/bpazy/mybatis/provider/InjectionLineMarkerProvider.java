@@ -1,6 +1,6 @@
 package com.github.bpazy.mybatis.provider;
 
-import com.google.common.base.Optional;
+import java.util.Optional;
 
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerInfo;
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerProvider;
@@ -38,7 +38,7 @@ public class InjectionLineMarkerProvider extends RelatedItemLineMarkerProvider {
         PsiType type = field.getType();
         if (!(type instanceof PsiClassReferenceType)) return;
 
-        Optional<PsiClass> clazz = JavaUtils.findClazz(element.getProject(), type.getCanonicalText());
+        java.util.Optional<PsiClass> clazz = JavaUtils.findClazz(element.getProject(), type.getCanonicalText());
         if (!clazz.isPresent()) return;
 
         PsiClass psiClass = clazz.get();
@@ -57,7 +57,7 @@ public class InjectionLineMarkerProvider extends RelatedItemLineMarkerProvider {
         if (JavaUtils.isAnnotationPresent(field, Annotation.AUTOWIRED)) {
             return true;
         }
-        Optional<PsiAnnotation> resourceAnno = JavaUtils.getPsiAnnotation(field, Annotation.RESOURCE);
+        java.util.Optional<PsiAnnotation> resourceAnno = JavaUtils.getPsiAnnotation(field, Annotation.RESOURCE);
         if (resourceAnno.isPresent()) {
             PsiAnnotationMemberValue nameValue = resourceAnno.get().findAttributeValue("name");
             String name = nameValue.getText().replaceAll("\"", "");

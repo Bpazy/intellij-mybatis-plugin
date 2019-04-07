@@ -1,7 +1,5 @@
 package com.github.bpazy.mybatis.intention;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -121,24 +119,19 @@ public class GenerateMapperIntention extends GenericIntention {
     private String[] getPathTextForShown(Project project, List<String> paths, final Map<String, PsiDirectory> pathMap) {
         Collections.sort(paths);
         final String projectBasePath = project.getBasePath();
-        Collection<String> result = Lists.newArrayList(Collections2.transform(paths, new Function<String, String>() {
-            @Override
-            public String apply(String input) {
-                String relativePath = FileUtil.getRelativePath(projectBasePath, input, File.separatorChar);
-                Module module = ModuleUtil.findModuleForPsiElement(pathMap.get(input));
-                return null == module ? relativePath : ("[" + module.getName() + "] " + relativePath);
-            }
-        }));
-        return result.toArray(new String[result.size()]);
+        return paths.stream()
+                .map(input -> {
+                    String relativePath = FileUtil.getRelativePath(projectBasePath, input, File.separatorChar);
+                    Module module = ModuleUtil.findModuleForPsiElement(pathMap.get(input));
+                    return null == module ? relativePath : ("[" + module.getName() + "] " + relativePath);
+                }).toArray(String[]::new);
     }
 
     private Map<String, PsiDirectory> getPathMap(Collection<PsiDirectory> directories) {
         Map<String, PsiDirectory> result = Maps.newHashMap();
         for (PsiDirectory directory : directories) {
             String presentableUrl = directory.getVirtualFile().getPresentableUrl();
-            if (presentableUrl != null) {
-                result.put(presentableUrl, directory);
-            }
+            result.put(presentableUrl, directory);
         }
         return result;
     }

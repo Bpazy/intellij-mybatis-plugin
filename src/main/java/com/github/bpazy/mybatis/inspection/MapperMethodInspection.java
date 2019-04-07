@@ -1,6 +1,6 @@
 package com.github.bpazy.mybatis.inspection;
 
-import com.google.common.base.Optional;
+import java.util.Optional;
 import com.intellij.codeInspection.InspectionManager;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
@@ -69,7 +69,7 @@ public class MapperMethodInspection extends MapperInspection {
                            .findStatement(method);
 
         if (!optionalDomElement.isPresent()) {
-            return Optional.absent();
+            return Optional.empty();
         }
 
         final DomElement domElement = optionalDomElement.get();
@@ -78,10 +78,10 @@ public class MapperMethodInspection extends MapperInspection {
             final Select selectStatement = (Select) domElement;
 
             if (selectStatement.getResultMap().getValue() != null) {
-                return Optional.absent();
+                return Optional.empty();
             }
 
-            final Optional<PsiClass> methodResultType = StatementGenerator.getSelectResultType(method);
+            final java.util.Optional<PsiClass> methodResultType = StatementGenerator.getSelectResultType(method);
             final PsiClass selectResultType = selectStatement.getResultType().getValue();
             final PsiIdentifier methodName = method.getNameIdentifier();
 
@@ -111,7 +111,7 @@ public class MapperMethodInspection extends MapperInspection {
             }
         }
 
-        return Optional.absent();
+        return Optional.empty();
     }
 
     private Optional<ProblemDescriptor> checkStatementExists(
@@ -129,6 +129,6 @@ public class MapperMethodInspection extends MapperInspection {
                     isOnTheFly));
         }
 
-        return Optional.absent();
+        return Optional.empty();
     }
 }

@@ -1,8 +1,7 @@
 package com.github.bpazy.mybatis.util;
 
-import com.google.common.base.Function;
-import com.google.common.base.Optional;
-import com.google.common.collect.Collections2;
+import java.util.Optional;
+
 import com.google.common.collect.Lists;
 
 import com.intellij.ide.fileTemplates.FileTemplate;
@@ -32,6 +31,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 
 /**
@@ -47,12 +47,12 @@ public final class MapperUtils {
     public static Optional<IdDomElement> findParentIdDomElement(@Nullable PsiElement element) {
         DomElement domElement = DomUtil.getDomElement(element);
         if (null == domElement) {
-            return Optional.absent();
+            return Optional.empty();
         }
         if (domElement instanceof IdDomElement) {
             return Optional.of((IdDomElement) domElement);
         }
-        return Optional.fromNullable(DomUtil.getParentOfType(domElement, IdDomElement.class, true));
+        return Optional.ofNullable(DomUtil.getParentOfType(domElement, IdDomElement.class, true));
     }
 
     public static PsiElement createMapperFromFileTemplate(@NotNull String fileTemplateName,
@@ -65,12 +65,7 @@ public final class MapperUtils {
 
     @NotNull
     public static Collection<PsiDirectory> findMapperDirectories(@NotNull Project project) {
-        return Collections2.transform(findMappers(project), new Function<Mapper, PsiDirectory>() {
-            @Override
-            public PsiDirectory apply(Mapper input) {
-                return input.getXmlElement().getContainingFile().getContainingDirectory();
-            }
-        });
+        return findMappers(project).stream().map(input -> input.getXmlElement().getContainingFile().getContainingDirectory()).collect(Collectors.toList());
     }
 
     public static boolean isElementWithinMybatisFile(@NotNull PsiElement element) {
@@ -98,41 +93,41 @@ public final class MapperUtils {
 
     @NotNull
     public static Collection<Mapper> findMappers(@NotNull Project project, @NotNull PsiClass clazz) {
-        return JavaUtils.isElementWithinInterface(clazz) ? findMappers(project, clazz.getQualifiedName()) : Collections.<Mapper>emptyList();
+        return JavaUtils.isElementWithinInterface(clazz) ? findMappers(project, clazz.getQualifiedName()) : Collections.emptyList();
     }
 
     @NotNull
     public static Collection<Mapper> findMappers(@NotNull Project project, @NotNull PsiMethod method) {
         PsiClass clazz = method.getContainingClass();
-        return null == clazz ? Collections.<Mapper>emptyList() : findMappers(project, clazz);
+        return null == clazz ? Collections.emptyList() : findMappers(project, clazz);
     }
 
     @NotNull
     @NonNls
     public static Optional<Mapper> findFirstMapper(@NotNull Project project, @NotNull String namespace) {
         Collection<Mapper> mappers = findMappers(project, namespace);
-        return CollectionUtils.isEmpty(mappers) ? Optional.<Mapper>absent() : Optional.of(mappers.iterator().next());
+        return CollectionUtils.isEmpty(mappers) ? Optional.empty() : Optional.of(mappers.iterator().next());
     }
 
     @NotNull
     @NonNls
     public static Optional<Mapper> findFirstMapper(@NotNull Project project, @NotNull PsiClass clazz) {
         String qualifiedName = clazz.getQualifiedName();
-        return null != qualifiedName ? findFirstMapper(project, qualifiedName) : Optional.<Mapper>absent();
+        return null != qualifiedName ? findFirstMapper(project, qualifiedName) : Optional.empty();
     }
 
     @NotNull
     @NonNls
     public static Optional<Mapper> findFirstMapper(@NotNull Project project, @NotNull PsiMethod method) {
         PsiClass containingClass = method.getContainingClass();
-        return null != containingClass ? findFirstMapper(project, containingClass) : Optional.<Mapper>absent();
+        return null != containingClass ? findFirstMapper(project, containingClass) : Optional.empty();
     }
 
     @SuppressWarnings("unchecked")
     @NotNull
     @NonNls
     public static Mapper getMapper(@NotNull DomElement element) {
-        Optional<Mapper> optional = Optional.fromNullable(DomUtil.getParentOfType(element, Mapper.class, true));
+        Optional<Mapper> optional = Optional.ofNullable(DomUtil.getParentOfType(element, Mapper.class, true));
         if (optional.isPresent()) {
             return optional.get();
         } else {
